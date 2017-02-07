@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>测试返回的数据结果</title>
+    <script src="js/jquery-1.9.1.js"></script>
+</head>
+<body>
+<div id="result"></div>
+</body>
+</html>
+<script>
+    $(function(){
+        //要一下所有的文章
+       /* $.ajax({
+            type:'GET',
+            url:'get.php?action=get_list'
+        }).success(function(data){
+            var dataObj = JSON.parse(data);
+            console.log(dataObj);
+        })*/
+
+        //要一下分类
+        $.ajax({
+            type:'GET',
+            dataType:'json',
+            url:'get.php?action=get_arctype'
+        }).success(function(data){
+            var dataObj = JSON.parse(data);
+            console.log(dataObj);
+        })
+
+
+
+    })
+
+
+</script>

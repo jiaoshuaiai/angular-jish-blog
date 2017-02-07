@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="js/jquery-1.9.1.js"></script>
+</head>
+<body>
+<div class="lists">
+    <!-- 列表页 -->
+    <ul id="ul_lists" style="clear: both"></ul>
+    <!--分页-->
+    <div id="page"></div>
+</div>
+</body>
+</html>
+<script>
+    var page_cur = 1; //当前页 
+    var total_num, page_size, page_total_num;//总记录数,每页条数,总页数
+    function getData(page) { //获取当前页数据 
+        $.ajax({
+            type: 'GET',
+            url: 'ajax.php',
+            data: {
+                'page': page - 1
+            },
+            dataType: 'json',
+            success: function(json) {
+                $("#ul_lists").empty();
+                total_num = json.total_num; //总记录数 
+                page_size = json.page_size; //每页数量 
+                page_cur = page; //当前页 
+                page_total_num = json.page_total_num; //总页数 
+                var li = "";
+                var list = json.list;
+                $.each(list,
+                        function(index, array) { //遍历返回json 
+                            li += "<li><a href='#'><img src='" + array['pic'] + "'>" + array['title'] + "</a></li>";
+                        });
+                $("#ul_lists").append(li);
+            },
+            complete: function() {
+                getPageBar(); //js生成分页，可用程序代替 
+            },
+            error: function() {
+                alert("数据异常,请检查是否json格式");
+            }
+        });
+    }
+
+
+    function getPageBar() { //js生成分页 
+        if (page_cur > page_total_num) page_cur = page_total_num; //当前页大于最大页数 
+        if (page_cur < 1) page_cur = 1; //当前页小于1 
+        page_str = "<span>共" + total_num + "条</span><span>" + page_cur + "/" + page_total_num + "</span>";
+        if (page_cur == 1) { //若是第一页 
+            page_str += "<span>首页</span><span>上一页</span>";
+        } else {
+            page_str += "<span><a href='javascript:void(0)' data-page='1'>首页</a></span><span><a href='javascript:void(0)' data-page='" + (page_cur - 1) + "'>上一页</a></span>";
+        }
+        if (page_cur >= page_total_num) { //若是最后页 
+            page_str += "<span>下一页</span><span>尾页</span>";
+        } else {
+            page_str += "<span><a href='javascript:void(0)' data-page='" + (parseInt(page_cur) + 1) + "'>下一页</a></span><span><a href='javascript:void(0)' data-page='" + page_total_num + "'>尾页</a></span>";
+        }
+        $("#page").html(page_str);
+    }
+    getData(1);
+</script>
